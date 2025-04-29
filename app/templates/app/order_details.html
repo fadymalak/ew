@@ -1,0 +1,46 @@
+{% extends 'app/base.html' %}
+
+{% block title %}Order Details{% endblock %}
+
+{% block content %}
+    <h2 class="mb-4">Order Details</h2>
+    
+    <div class="card mb-4 bg-light">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-1"><strong>Order ID:</strong></p>
+                    <p class="text-muted">{{ order.unique_id }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p class="mb-1"><strong>Created:</strong></p>
+                    <p class="text-muted">{{ order.created_at }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th>Item Name</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.item_name }}</td>
+                    <td>{{ item.quantity }}</td>
+                </tr>
+                {% endfor %}
+                {% if not items %}
+                <tr>
+                    <td colspan="2" class="text-center text-muted">No items added to this order yet.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

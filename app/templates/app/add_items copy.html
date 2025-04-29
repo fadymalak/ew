@@ -1,0 +1,67 @@
+{% extends 'app/base.html' %}
+{% load form_filters %}
+
+{% block title %}Add Items to Order{% endblock %}
+
+{% block content %}
+    <h2 class="mb-4">Add Items to Order</h2>
+    <p class="text-muted mb-4">Order ID: {{ order.unique_id }}</p>
+    
+    <form method="post" id="order-form">
+        {% csrf_token %}
+        {{ formset.management_form }}
+        <div id="items-formset">
+            {% for form in formset %}
+            <div class="form-row mb-3">
+                <div class="col-md-6 col-9">
+                    <div class="form-group">
+                        <label for="{{ form.item_name.id_for_label }}">Item Name</label>
+                        {{ form.item_name|addclass:"form-control" }}
+                    </div>
+                </div>
+                <div class="col-md-6 col-3">
+                    <div class="form-group">
+                        <label for="{{ form.quantity.id_for_label }}">Quantity</label>
+                        {{ form.quantity|addclass:"form-control" }}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="mt-4">
+            <button type="button" class="btn btn-secondary mr-2" onclick="addMore()">Add More Items</button>
+            <button type="submit" class="btn btn-primary">Submit Order</button>
+        </div>
+    </form>
+
+    <script>
+        function addMore() {
+            var formset = document.getElementById('items-formset');
+            var totalFormsInput = document.querySelector('#id_form-TOTAL_FORMS');
+            var formCount = parseInt(totalFormsInput.value);
+            
+            var firstForm = formset.querySelector('.form-row');
+            var newForm = firstForm.cloneNode(true);
+            
+            var inputs = newForm.querySelectorAll('input');
+            inputs.forEach(function(input) {
+                var name = input.name;
+                var newName = name.replace('-0-', '-' + formCount + '-');
+                input.name = newName;
+                input.id = 'id_' + newName;
+                input.value = '';
+                input.className = 'form-control';  // Ensure Bootstrap class is maintained
+            });
+            
+            var labels = newForm.querySelectorAll('label');
+            labels.forEach(function(label) {
+                var forAttr = label.getAttribute('for');
+                var newForAttr = forAttr.replace('-0-', '-' + formCount + '-');
+                label.setAttribute('for', newForAttr);
+            });
+            
+            formset.appendChild(newForm);
+            totalFormsInput.value = formCount + 1;
+        }
+    </script>
+{% endblock %}
